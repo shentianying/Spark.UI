@@ -1,0 +1,46 @@
+.el-tooltip__popper{
+  max-width: 65vw;
+  max-height: 60vh;
+}
+.column-wrapper{
+  overflow: hidden;
+text-overflow:ellipsis;
+white-space: nowrap;
+}
+
+.link {
+  cursor: pointer;
+  text-decoration: underline;
+}
+.state{
+  display: flex;
+  align-items: center;
+  .circle.state-1000{
+    background-color: #1890FF;
+  }
+  .circle.state-1001{
+    background-color: #722ED1;
+  }
+  .circle.state-100{
+    background-color: #722ED1;
+  }
+  .circle.state-10000{
+    background-color: #52C41A;
+  }
+  .circle.state--1{
+    background-color: #F5222D;
+  }
+  .circle.state-1{
+    background-color: #FA8C16;
+  }
+  .circle.state-10{
+    background-color: #13C2C2;
+  }
+  .circle{
+    border-radius: 50%;
+    width: 5px;
+    height: 5px;
+    margin-right: 5px;
+    background-color: rgba(145, 145, 145, 100);
+  }
+}

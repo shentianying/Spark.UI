@@ -1,0 +1,12 @@
+.my-input {
+  display: inline-block;
+  .el-select {
+    .el-input__inner {
+      padding-right: 15px;
+    }
+  }
+  .el-select,
+  .el-date-editor {
+    width: 100%;
+  }
+}
