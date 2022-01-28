@@ -135,6 +135,7 @@ export default {
       var postData = {}
       postData.PageId = this.currentPage.id
       this.listLoading = true
+      console.log(postData)
       getPermit(postData).then(response => {
         const { data } = response
         this.list = data
@@ -176,7 +177,7 @@ export default {
             return
           }
         }
-        // console.log('data:', data)
+        console.log('data:', data)
         this.currentPage = data
         this.fetchData()
       } else {

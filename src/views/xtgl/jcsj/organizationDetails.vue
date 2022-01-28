@@ -43,7 +43,6 @@
 </template>
 
 <script>
-import { GetImprestListByPersonId } from '@/api/xmgl/ProjectSettle.js'
 import TableEx from '@/components/TableEx'
 import Detailsedit from '@/components/Detailsedit'
 export default {
@@ -155,13 +154,8 @@ export default {
   },
   methods: {
     fetchData() {
-      const { id, year } = this.$route.query
+      const { id } = this.$route.query
       this.myId = id
-      GetImprestListByPersonId({ id: 1, year }).then(res => {
-        this.myDetails = res
-        this.table.list = res.data
-        console.log(this.table.list)
-      })
       if (this.obj) {
         var newObj = JSON.parse(JSON.stringify(this.obj))
         this.infoList = newObj
