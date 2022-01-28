@@ -44,12 +44,7 @@
 
       <span style="">
         <i>切换账号：</i>
-        <el-link type="danger" @click="changeUser('100001')">金角大王</el-link>
-        <el-link type="danger" @click="changeUser('100002')">银角大王</el-link>
-        <el-link type="danger" @click="changeUser('100003')">虎力大仙</el-link>
-        <el-link type="danger" @click="changeUser('100004')">鹿力大仙</el-link>
-        <el-link type="danger" @click="changeUser('100005')">羊力大仙</el-link>
-        <el-link type="danger" @click="changeUser('100006')">薛飞</el-link>
+        <el-link type="danger" @click="changeUser('100001')">管理员</el-link>
       </span>
 
     </el-form>

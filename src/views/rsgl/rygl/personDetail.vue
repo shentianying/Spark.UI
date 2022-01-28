@@ -215,7 +215,6 @@
 
 <script>
 import { getPersonById } from '@/api/rsgl/person'
-import { GetImprestListByPersonId } from '@/api/xmgl/ProjectSettle.js'
 import { getPersonPostListById } from '@/api/rsgl/personPost'
 import TableEx from '@/components/TableEx'
 export default {
@@ -304,16 +303,6 @@ export default {
       personTypeList: [] // 员工类型列表
     }
   },
-  computed: {
-    imprestYear: {
-      get() {
-        return `${this.imprestTable.year}-00-00`
-      },
-      set(val) {
-        this.imprestTable.year = new Date(val).getFullYear()
-      }
-    }
-  },
   watch: {
     activeTab(val) {
       switch (val) {
@@ -335,14 +324,6 @@ export default {
     }
   },
   methods: {
-    getImprestList() {
-      this.imprestTable.loading = true
-      GetImprestListByPersonId({ id: this.$route.query.id, year: this.imprestTable.year }).then(res => {
-        this.imprestTable.list = res.data
-      }).finally(() => {
-        this.imprestTable.loading = false
-      })
-    },
     async fetchData() {
       if (this.$route.query.id !== 0) {
         this.listLoading = true
