@@ -10,7 +10,7 @@
     <TableEx
       ref="TableEx"
       :size="size"
-      excel-name="意向企业列表"
+      excel-name="访客列表"
       :total="table.total"
       :current-page.sync="table.currentPage"
       :page-size.sync="table.pageSize"
@@ -31,7 +31,7 @@
 
 <script>
 import TableEx from '@/components/TableEx'
-import { getEnterprisePaging } from '@/api/qygl/visitor.js'
+import { getVisitorPaging } from '@/api/qygl/visitor.js'
 import SearchBar from '@/components/SearchBar'
 
 export default {
@@ -51,55 +51,49 @@ export default {
         // columns注释在 @/components/TableEx/index.vue
         columns: [
           {
-            label: '公司名称', // 表头
-            prop: 'companyName', // 渲染的属性
+            label: '来访人姓名', // 表头
+            prop: 'name', // 渲染的属性
             class: 'link', // class
-            width: '150', // 宽度
+            width: '120', // 宽度
             click: (row) => {
               this.handleDetails(row)
             }
           },
           {
-            label: '法定代表人',
-            prop: 'legalPerson',
-            width: '150'
-          },
-          {
-            label: '联系人',
-            prop: 'linkMan',
+            label: '来访人电话',
+            prop: 'telphone',
             width: '120'
           },
           {
-            label: '联系电话',
-            prop: 'linkTel',
+            label: '车牌号',
+            prop: 'carNum',
             width: '120'
           },
           {
-            label: '经营状态',
-            prop: 'operationState',
-            width: '120'
-          },
-          {
-            label: '成立日期',
-            prop: 'setDate',
+            label: '到访时间',
+            prop: 'visitTime',
             width: '120',
             format: 'date'
           },
           {
-            label: '官网',
-            prop: 'officialNet',
+            label: '拜访区域',
+            prop: 'regionId',
             width: '120'
           },
           {
-            label: '邮箱',
-            prop: 'email',
+            label: '接待人',
+            prop: 'receivePerson',
             width: '120'
           },
           {
-            label: '是否使用',
-            prop: 'inUse',
-            width: '120',
-            format: (val) => val ? '是' : '否'
+            label: '接待人联系方式',
+            prop: 'receiveTel',
+            width: '120'
+          },
+          {
+            label: '随行人数',
+            prop: 'peerNum',
+            width: '100'
           },
           {
             business: 'createUser' // 业务部分的快捷使用参考 src\components\TableEx\Column\businessList.js
@@ -157,12 +151,10 @@ export default {
     parseServeDate(res) {
       const {
         data,
-        count,
-        operationStateList
+        count
       } = res
       // 列表数据初始化
       console.log('列表数据:', data)
-      this.$refs['SearchBar'].setData('operationStates', 'options', operationStateList, 'init')
       this.table.list = data
       this.table.total = count
     },
@@ -176,7 +168,7 @@ export default {
       postData.currentPage = currentPage
       postData.pageSize = pageSize
       // 请求开始
-      return getEnterprisePaging(postData)
+      return getVisitorPaging(postData)
     },
 
     /**
@@ -205,14 +197,14 @@ export default {
      * @param {*} row
      */
     handleDetails(row) {
-      this.$router.push({ name: 'EnterpriseDetails', query: { id: row.id, refreshRouterName: this.$route.name }})
+      this.$router.push({ name: 'VisitorDetails', query: { id: row.id, refreshRouterName: this.$route.name }})
     },
     /**
      * @description: table编辑
      * @param {Object} row
      */
     handleEdit(id = '', type) {
-      this.$router.push({ name: 'EnterpriseEdit', query: { type, id, refreshRouterName: this.$route.name }})
+      this.$router.push({ name: 'VisitorEdit', query: { type, id, refreshRouterName: this.$route.name }})
     }
   }
 }

@@ -15,6 +15,7 @@
         />
         <div class="actions">
           <el-button :size="size" @click="submitForm()">保存</el-button>
+          <el-button :size="size" @click="back()">取消</el-button>
         </div>
       </el-card>
     </template>

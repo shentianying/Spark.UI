@@ -4,21 +4,44 @@ export default () => {
     {
       name: 'name',
       value: '',
-      label: '公司名称',
+      label: '访客姓名',
       isMain: true,
       placeholder: '输入检索',
       component: 'Input'
     },
     {
-      name: 'operationStates',
-      value: [],
-      label: '经营状态',
+      name: 'tel',
+      value: '',
+      label: '访客电话',
       isMain: true,
-      placeholder: '全部',
-      component: 'Select',
-      multiple: true,
-      propsLabel: 'name',
-      options: []
+      placeholder: '输入检索',
+      component: 'Input'
+    },
+    {
+      name: 'carNum',
+      value: '',
+      label: '车牌',
+      isMain: true,
+      placeholder: '输入检索',
+      component: 'Input'
+    },
+    {
+      name: 'receivor',
+      value: '',
+      label: '接待人',
+      isMain: true,
+      placeholder: '输入检索',
+      component: 'Input'
+    },
+    {
+      name: 'date',
+      value: [],
+      label: '入园日期',
+      placeholder: '选择',
+      transformType: 'property-serial', // 转换数据类型
+      component: 'DateRange',
+      dateType: 'date',
+      rules: []
     }
   ]
 }
