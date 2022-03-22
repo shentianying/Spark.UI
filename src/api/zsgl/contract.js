@@ -21,6 +21,13 @@ export function getContractById(params) {
     params
   })
 }
+export function getContractDetailById(params) {
+  return request({
+    url: '/api/zsgl/Contract/getContractDetailById',
+    method: 'get',
+    params
+  })
+}
 export function addContract(data) {
   return request({
     url: '/api/zsgl/Contract/addContract',

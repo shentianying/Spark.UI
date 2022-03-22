@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { getContractById } from '@/api/zsgl/contract.js'
+import { getContractDetailById } from '@/api/zsgl/contract.js'
 import Detailsedit from '@/components/Detailsedit'
 export default {
   name: 'ContractDetails',
@@ -57,7 +57,7 @@ export default {
             setDate,
             startDate,
             endDate,
-            ContractType,
+            enterpriseType,
             checkDate,
             inUse,
             remark,
@@ -66,7 +66,8 @@ export default {
             createUserName,
             createDate,
             lastEditUserName,
-            lastEditDate
+            lastEditDate,
+            upFile
           }
 
         }
@@ -106,15 +107,15 @@ export default {
         { label: '营业期限止', value: d(endDate) },
         { label: '成立日期', value: d(setDate) },
         { label: '核准日期', value: d(checkDate) },
-        { label: '企业类型', value: ContractType },
+        { label: '企业类型', value: enterpriseType },
         { label: '是否使用', value: inUse ? '是' : '否' },
         { label: '备注', monopolize: true, value: remark },
         { label: '合同开始日期', value: d(startDate) },
         { label: '合同结束日期', value: d(endDate) },
         { label: '签订区域', value: regionId },
         { label: '是否永久合同', value: isForever ? '是' : '否' },
+        { label: '附件', value: upFile || [], component: 'UpFile', monopolize: true },
         ...info
-        // { label: '附件', value: upFile || [], component: 'UpFile', monopolize: true },
       ]
     }
 
@@ -138,7 +139,7 @@ export default {
      */
     async fetchData() {
       if (!this.myId) return
-      getContractById({ id: this.myId }).then(res => {
+      getContractDetailById({ id: this.myId }).then(res => {
         this.myDetails = res
       }).catch(e => {
         console.log('fetchData:请求列表数据失败，错误信息:', e)

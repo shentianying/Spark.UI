@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { getEnterpriseById } from '@/api/zsgl/enterprise.js'
+import { getEnterpriseDetailById } from '@/api/zsgl/enterprise.js'
 import Detailsedit from '@/components/Detailsedit'
 export default {
   name: 'EnterpriseDetails',
@@ -132,7 +132,7 @@ export default {
      */
     async fetchData() {
       if (!this.myId) return
-      getEnterpriseById({ id: this.myId }).then(res => {
+      getEnterpriseDetailById({ id: this.myId }).then(res => {
         this.myDetails = res
       }).catch(e => {
         console.log('fetchData:请求列表数据失败，错误信息:', e)

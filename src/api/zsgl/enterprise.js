@@ -28,6 +28,13 @@ export function getEnterpriseById(params) {
     params
   })
 }
+export function getEnterpriseDetailById(params) {
+  return request({
+    url: '/api/zsgl/Enterprise/getEnterpriseDetailById',
+    method: 'get',
+    params
+  })
+}
 export function addEnterprise(data) {
   return request({
     url: '/api/zsgl/Enterprise/addEnterprise',
