@@ -1,31 +1,92 @@
 <template>
   <div class="app-container tablelist">
-    <SearchBar ref="SearchBar" v-model="searchData" :search="fetchData" :size="size" :loading="table.tbLoading" />
-    <div class="action">
-      <div>
-        <el-button :size="size" icon="el-icon-plus" type="primary" @click="handleEdit('','add')">新建</el-button>
-      </div>
-    </div>
-    <div>
-      <span>{}</span>
-      <el-divider />
+    <el-row style="margin-bottom:10px;">
+      <el-col :span="16" style="text-align:left;">
+        <el-input v-model="search.keyName" placeholder="请输入资讯关键字" clearable size="mini" maxlength="11" style="width:120px;" />
+        <el-button type="primary" size="mini" @click="goSearch">搜索</el-button>
+      </el-col>
+    </el-row>
+    <el-tabs v-model="activeTab" :lazy="true" @tab-click="setSelected">
+      <el-tab-pane :label="tabsInfo[0].label" :name="tabsInfo[0].name">
+        <el-table
+          v-loading="listLoading"
+          :data="infoList"
+          element-loading-text="Loading"
+          fit
+          :show-header="false"
+          highlight-current-row
+          size="mini"
+          @row-click="handleDetails"
+        >
+          <el-table-column>
+            <template slot-scope="scope">
+              <h3>{{ scope.row.title }}</h3>
+              {{ scope.row.content }}
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-tab-pane>
+      <el-tab-pane :label="tabsInfo[1].label" :name="tabsInfo[1].name">
+        <el-table
+          v-loading="listLoading"
+          :data="infoList"
+          element-loading-text="Loading"
+          fit
+          :show-header="false"
+          highlight-current-row
+          size="mini"
+          @row-click="handleDetails"
+        >
+          <el-table-column>
+            <template slot-scope="scope">
+              <h3>{{ scope.row.title }}</h3>
+              {{ scope.row.content }}
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-tab-pane>
+    </el-tabs>
+    <div style="text-align:center;margin:10px 0;">
+      <el-pagination
+        :hide-on-single-page="false"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
+        :current-page.sync="currentPage"
+        :page-size="pageSize"
+        @current-change="fetchData"
+        @size-change="sizeChange"
+      />
     </div>
   </div>
 </template>
 
 <script>
-import { getVisitorPaging } from '@/api/qygl/visitor.js'
-import SearchBar from '@/components/SearchBar'
+import { getBussinessInformationPaging } from '@/api/zsgl/bussinessInformation.js'
 
 export default {
-  name: 'Visitor',
+  name: 'BussinessInformation',
   components: {
-    SearchBar
+
   },
   data() {
     return {
       size: 'mini', // 整体大小 medium / small / mini
-      searchData: require('./searchData').default() // 渲染搜索栏数据
+      activeTab: 'display',
+      tabsInfo: [
+        { name: 'display', selected: false, label: '行业展会' },
+        { name: 'association', selected: false, label: '行业协会' }
+      ],
+      infoList: [],
+      listLoading: false,
+      total: 0,
+      currentPage: 1,
+      pageSize: this.utils.getPersonalSettings().pageSize,
+      search: {
+        keyName: '',
+        type: 1,
+        currentPage: 1,
+        pageSize: 10
+      }
     }
   },
   /**
@@ -34,39 +95,18 @@ export default {
    */
   beforeRouteEnter(to, from, next) {
     next(vm => {
+      vm.tabsInfo[0].selected = true
       vm.fetchData()
     })
   },
   methods: {
-    fetchData(type) { // SearchBar 事件类型 重置:reset  搜索:search
-      switch (type) {
-        case 'filter':
-          this.table.currentPage = 1
-          break
-        case 'reset':
-        case 'search':
-          this.table.currentPage = 1
-          this.lastSearch = null
-          break
-      }
-      this.table.tbLoading = true
+    fetchData() {
+      this.listLoading = true
       this.getTable()
         .then(res => this.parseServeDate(res))
         .finally(() => {
-          this.table.tbLoading = false
+          this.listLoading = false
         })
-    },
-    /**
-     * @description:表格导出功能
-     */
-    async exportExcel() {
-      const Excel = this.$refs['TableEx'].initExcel()
-      this.getTable(1, this.table.total).then(({ data }) => {
-        Excel.format([{ ...Excel.sheet[0], table: data }]).export()
-      }).catch(() => {
-        this.$message.error('导出失败')
-        Excel.cancel()
-      })
     },
     parseServeDate(res) {
       const {
@@ -75,56 +115,42 @@ export default {
       } = res
       // 列表数据初始化
       console.log('列表数据:', data)
-      this.table.list = data
-      this.table.total = count
+      this.infoList = data
+      this.total = count
     },
     /**
      * @description: 获取列表数据、搜索数据
      * @return {*}
      */
-    getTable(currentPage = this.table.currentPage, pageSize = this.table.pageSize) {
+    getTable(currentPage = this.currentPage, pageSize = this.pageSize) {
       // 获取请求参数
-      const postData = this.getSearchData()
+      const postData = this.search
       postData.currentPage = currentPage
       postData.pageSize = pageSize
       // 请求开始
-      return getVisitorPaging(postData)
-    },
-
-    /**
-     * @description: 搜索栏数据转换
-     * @return {Object} request数据
-     */
-    getSearchData() {
-      if (this.lastSearch === null) {
-        this.lastSearch = {}
-        this.searchData.forEach(item => {
-          const { value, transformType, name } = item
-          if (transformType === 'property-serial') {
-            value.forEach((ele, index) => {
-              const serial = index + 1
-              this.lastSearch[name + serial] = ele
-            })
-          } else {
-            this.lastSearch[name] = value
-          }
-        })
-      }
-      return this.lastSearch
+      return getBussinessInformationPaging(postData)
     },
     /**
      * @description: 路由到详情页
      * @param {*} row
      */
     handleDetails(row) {
-      this.$router.push({ name: 'VisitorDetails', query: { id: row.id, refreshRouterName: this.$route.name }})
+      if (row.url !== '') {
+        window.open(row.url, '_blank')
+      }
     },
-    /**
-     * @description: table编辑
-     * @param {Object} row
-     */
-    handleEdit(id = '', type) {
-      this.$router.push({ name: 'VisitorEdit', query: { type, id, refreshRouterName: this.$route.name }})
+    goSearch() {
+      this.fetchData()
+    },
+    sizeChange(val) {
+      this.pageSize = val
+      this.fetchData()
+    },
+    // 解决 一次打开 多个选项卡一次性 加载 所有数据的问题
+    setSelected(tag) {
+      this.tabsInfo[Number(tag.index)].selected = true
+      this.search.type = Number(tag.index) + 1
+      this.fetchData()
     }
   }
 }

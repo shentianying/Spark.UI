@@ -10,7 +10,7 @@
     <TableEx
       ref="TableEx"
       :size="size"
-      excel-name="电子监控列表"
+      excel-name="意向企业列表"
       :total="table.total"
       :current-page.sync="table.currentPage"
       :page-size.sync="table.pageSize"
@@ -31,11 +31,11 @@
 
 <script>
 import TableEx from '@/components/TableEx'
-import { getMonitorPaging } from '@/api/jkgl/monitor.js'
+import { getEnterprisePaging } from '@/api/zsgl/enterprise.js'
 import SearchBar from '@/components/SearchBar'
 
 export default {
-  name: 'MonitorIndex',
+  name: 'Advertisement',
   components: {
     SearchBar,
     TableEx
@@ -51,8 +51,8 @@ export default {
         // columns注释在 @/components/TableEx/index.vue
         columns: [
           {
-            label: '编号', // 表头
-            prop: 'number', // 渲染的属性
+            label: '公司名称', // 表头
+            prop: 'companyName', // 渲染的属性
             class: 'link', // class
             width: '150', // 宽度
             click: (row) => {
@@ -60,20 +60,41 @@ export default {
             }
           },
           {
-            label: '名称',
-            prop: 'name',
+            label: '法定代表人',
+            prop: 'legalPerson',
             width: '150'
           },
           {
-            label: 'IP地址',
-            prop: 'ipAddress',
+            label: '联系人',
+            prop: 'linkMan',
             width: '120'
           },
-          // {
-          //   label: '安装位置',
-          //   prop: 'Location',
-          //   width: '120'
-          // },
+          {
+            label: '联系电话',
+            prop: 'linkTel',
+            width: '120'
+          },
+          {
+            label: '经营状态',
+            prop: 'operationState',
+            width: '120'
+          },
+          {
+            label: '成立日期',
+            prop: 'setDate',
+            width: '120',
+            format: 'date'
+          },
+          {
+            label: '官网',
+            prop: 'officialNet',
+            width: '120'
+          },
+          {
+            label: '邮箱',
+            prop: 'email',
+            width: '120'
+          },
           {
             label: '是否使用',
             prop: 'inUse',
@@ -136,10 +157,12 @@ export default {
     parseServeDate(res) {
       const {
         data,
-        count
+        count,
+        operationStateList
       } = res
       // 列表数据初始化
       console.log('列表数据:', data)
+      this.$refs['SearchBar'].setData('operationStates', 'options', operationStateList, 'init')
       this.table.list = data
       this.table.total = count
     },
@@ -153,7 +176,7 @@ export default {
       postData.currentPage = currentPage
       postData.pageSize = pageSize
       // 请求开始
-      return getMonitorPaging(postData)
+      return getEnterprisePaging(postData)
     },
 
     /**
@@ -182,14 +205,14 @@ export default {
      * @param {*} row
      */
     handleDetails(row) {
-      this.$router.push({ name: 'MonitorDetails', query: { id: row.id, refreshRouterName: this.$route.name }})
+      this.$router.push({ name: 'EnterpriseDetails', query: { id: row.id, refreshRouterName: this.$route.name }})
     },
     /**
      * @description: table编辑
      * @param {Object} row
      */
     handleEdit(id = '', type) {
-      this.$router.push({ name: 'MonitorEdit', query: { type, id, refreshRouterName: this.$route.name }})
+      this.$router.push({ name: 'EnterpriseEdit', query: { type, id, refreshRouterName: this.$route.name }})
     }
   }
 }

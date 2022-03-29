@@ -24,7 +24,7 @@ export default {
   },
   data() {
     return {
-      title: 'SPARK综合管理系统',
+      title: '综合管理系统',
       logo: require('@/assets/images/logo.png')
     }
   }
