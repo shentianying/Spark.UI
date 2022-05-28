@@ -1,7 +1,7 @@
 const axios = require('axios')
 
 const service = axios.create({
-  baseURL: 'http://218.91.205.38/Spark/Api/'
+  baseURL: 'http://120.48.17.144/Api/'
 })
 
 service.interceptors.response.use(

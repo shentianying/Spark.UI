@@ -1,5 +1,5 @@
 <template>
-  <div class="login-container">
+  <div class="login-container" :style="bgGround">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
       <div class="title-container">
@@ -74,6 +74,16 @@ export default {
       loading: false,
       passwordType: 'password',
       redirect: undefined
+    }
+  },
+  computed: {
+    bgGround() {
+      return {
+        background: `url('${process.env.VUE_APP_BASE_API}/public/loginBackground.jpg') no-repeat`,
+        height: '100%',
+        width: '100%',
+        backgroundSize: 'cover'
+      }
     }
   },
   watch: {
