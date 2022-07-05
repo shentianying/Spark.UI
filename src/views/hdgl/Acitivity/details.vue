@@ -11,10 +11,10 @@
 </template>
 
 <script>
-import { getAcitivityDetailById } from '@/api/hdgl/acitivity.js'
+import { getAcitivityById } from '@/api/hdgl/acitivity.js'
 import Detailsedit from '@/components/Detailsedit'
 export default {
-  name: 'AcitivityDetails',
+  name: 'AcitivityDetail',
   components: {
     Detailsedit
   },
@@ -63,8 +63,8 @@ export default {
         { label: '活动类型', value: typeName },
         { label: '开始时间', value: d(startDate) },
         { label: '结束时间', value: d(endDate) },
-        { label: '内容', monopolize: true, value: content },
-        { label: '备注', monopolize: true, value: remark },
+        { label: '内容', value: content },
+        { label: '备注', value: remark },
         ...info
         // { label: '附件', value: upFile || [], component: 'UpFile', monopolize: true },
       ]
@@ -90,7 +90,7 @@ export default {
      */
     async fetchData() {
       if (!this.myId) return
-      getAcitivityDetailById({ id: this.myId }).then(res => {
+      getAcitivityById({ id: this.myId }).then(res => {
         this.myDetails = res
       }).catch(e => {
         console.log('fetchData:请求列表数据失败，错误信息:', e)

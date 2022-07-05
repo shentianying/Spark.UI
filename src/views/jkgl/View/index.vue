@@ -190,10 +190,11 @@ export default {
       })
     },
     update(data) {
-      this.dialogTitle = '监控点名称修改'
+      this.dialogTitle = '修改节点'
       this.comName = 'AddMonitorNode'
       this.currentRow = data
       this.dialogTableVisible = true
+      console.log(data)
     },
     handleNodeClick(data, node) {
       // console.log('node节点信息:', node)

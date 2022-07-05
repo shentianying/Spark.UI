@@ -4,15 +4,15 @@ export default () => {
     {
       name: 'name',
       value: '',
-      label: '公司名称',
+      label: '广告主题',
       isMain: true,
       placeholder: '输入检索',
       component: 'Input'
     },
     {
-      name: 'operationStates',
+      name: 'types',
       value: [],
-      label: '经营状态',
+      label: '类型',
       isMain: true,
       placeholder: '全部',
       component: 'Select',

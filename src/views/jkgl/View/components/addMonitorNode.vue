@@ -8,48 +8,29 @@
     label-width="120px"
     size="mini"
   >
-    <el-form-item label="分类名称">
-      <span>{{ obj.name }}</span>
-    </el-form-item>
-
-    <el-form-item label="选择属性">
-      <el-table
-        ref="selectTable"
-        v-loading="listLoading"
-        :data="list"
-        element-loading-text="Loading"
-        border
-        fit
-        highlight-current-row
+    <el-form-item label="选择分类" prop="pid">
+      <org-select2
+        v-if="list"
+        v-model="ruleForm.pid"
         size="mini"
-        tooltip-effect="dark"
-        @selection-change="handleSelectionChange"
-      >
-        <el-table-column type="selection" align="center" />
-        <el-table-column align="center" label="属性名称">
-          <template slot-scope="scope">
-            {{ scope.row.name }}
-          </template>
-        </el-table-column>
-        <el-table-column align="center" label="允许手动输入">
-          <template slot-scope="scope">
-            <el-switch
-              v-model="scope.row.canInput"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
-            />
-          </template>
-        </el-table-column>
-        <el-table-column align="center" label="是否可用">
-          <template slot-scope="scope">
-            <el-switch
-              v-model="scope.row.inUse"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
-            />
-          </template>
-        </el-table-column>
-      </el-table>
+        :collapse-tags="false"
+        :show-all-levels="true"
+        :multiple="false"
+        :options="list"
+        :disabled="obj!==null"
+        :filterable="true"
+        expand-trigger="hover"
+        placeholder="选择分类"
+        :check-strictly="true"
+        select-style="width:220px;"
+      />
+    </el-form-item>
+    <el-form-item label="名称" prop="name">
+      <el-input
+        v-model="ruleForm.name"
+        maxlength="50"
+        show-word-limit
+      />
     </el-form-item>
     <el-form-item>
       <el-button type="primary" size="mini" :loading="buttonLoading" @click="submitForm('ruleForm')">保存</el-button>

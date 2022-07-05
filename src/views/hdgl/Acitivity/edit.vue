@@ -15,6 +15,7 @@
         />
         <div class="actions">
           <el-button :size="size" @click="submitForm()">保存</el-button>
+          <el-button :size="size" @click="cancel()">取消</el-button>
         </div>
       </el-card>
     </template>
@@ -23,7 +24,7 @@
 
 <script>
 import MyForm from '@/components/MyForm'
-import { getActivityById, initActivity, addActivity, putActivity, deleteActivity } from '@/api/hdgl/activity.js'
+import { getAcitivityById, initAcitivity, addAcitivity, putAcitivity, deleteAcitivity } from '@/api/hdgl/acitivity.js'
 export default {
   name: 'AcitivityEdit',
   components: {
@@ -47,7 +48,7 @@ export default {
       },
       firstRules: {
         title: [
-          { required: true, message: '请输入活动主体', trigger: 'change' }
+          { required: true, message: '请输入活动主题', trigger: 'change' }
         ],
         startDate: [
           { required: true, message: '请选择开始时间', trigger: 'change' }
@@ -84,8 +85,8 @@ export default {
         { label: '活动类型:', keyword: 'type', component: 'Select', props: { propsLabel: 'name', placeholder: selectPlaceholder, options: activityTypeList }},
         { label: '开始时间:', keyword: 'startDate', component: 'el-date-picker', props: { type: 'date', placeholder: '选择日期', valueFormat: 'yyyy-MM-dd' }},
         { label: '结束时间:', keyword: 'endDate', component: 'el-date-picker', props: { type: 'date', placeholder: '选择日期', valueFormat: 'yyyy-MM-dd' }},
-        { label: '内容:', monopolize: true, keyword: 'content', props: { placeholder: inputPlaceholder, type: 'textarea' }},
-        { label: '备注:', monopolize: true, keyword: 'remark', props: { placeholder: inputPlaceholder, type: 'textarea' }}
+        { label: '内容:', keyword: 'content', props: { placeholder: inputPlaceholder, type: 'textarea' }},
+        { label: '备注:', keyword: 'remark', props: { placeholder: inputPlaceholder, type: 'textarea' }}
       ]
     }
   },
@@ -114,7 +115,6 @@ export default {
           name: name
         }
         form.companyId = selectOrgId
-        form.personId = uid
       }
     })
   },
@@ -129,15 +129,15 @@ export default {
      * @description: 初始化选项框数据
      */
     initSelect() {
-      initActivity().then(res => {
-        this.filter.ActivityTypeList = res.ActivityTypeList
+      initAcitivity().then(res => {
+        this.filter.activityTypeList = res.activityTypeList
       })
     },
     /**
      * @description: 根据id获取数据并且初始化选项框数据
      */
     initDataById(id) {
-      getActivityById({ id }).then(res => {
+      getAcitivityById({ id }).then(res => {
         console.log(res.data)
         const form = this.firstForm
         for (const key in form) {
@@ -162,7 +162,7 @@ export default {
       this.$confirm('作废以后将无法编辑，是否确定作废？', '提示', {
         type: 'warning'
       }).then(() => {
-        return deleteActivity({ id: this.firstForm.id })
+        return deleteAcitivity({ id: this.firstForm.id })
       }).then(() => {
         this.$message.success('操作成功')
         this.back()
@@ -176,18 +176,21 @@ export default {
         ...this.firstForm
       }
       if (req.id) {
-        putActivity(req).then(res => {
+        putAcitivity(req).then(res => {
           // 更新
           this.$message.success('保存成功')
           this.back()
         })
       } else {
-        addActivity(req).then(() => {
+        addAcitivity(req).then(() => {
           // 添加
           this.$message.success('提交成功')
           this.back()
         })
       }
+    },
+    cancel() {
+      this.back()
     },
     /**
      * 返回上一页，并关闭当前页

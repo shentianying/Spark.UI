@@ -10,7 +10,7 @@
     <TableEx
       ref="TableEx"
       :size="size"
-      excel-name="意向企业列表"
+      excel-name="活动列表"
       :total="table.total"
       :current-page.sync="table.currentPage"
       :page-size.sync="table.pageSize"
@@ -138,11 +138,11 @@ export default {
       const {
         data,
         count,
-        operationStateList
+        activityTypeList
       } = res
       // 列表数据初始化
       console.log('列表数据:', data)
-      this.$refs['SearchBar'].setData('operationStates', 'options', operationStateList, 'init')
+      this.$refs['SearchBar'].setData('types', 'options', activityTypeList, 'init')
       this.table.list = data
       this.table.total = count
     },
@@ -185,7 +185,7 @@ export default {
      * @param {*} row
      */
     handleDetails(row) {
-      this.$router.push({ name: 'ActivityDetails', query: { id: row.id, refreshRouterName: this.$route.name }})
+      this.$router.push({ name: 'ActivityDetail', query: { id: row.id, refreshRouterName: this.$route.name }})
     },
     /**
      * @description: table编辑

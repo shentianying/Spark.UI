@@ -31,7 +31,7 @@
 
 <script>
 import TableEx from '@/components/TableEx'
-import { getEnterprisePaging } from '@/api/zsgl/enterprise.js'
+import { getAdvertisementPaging } from '@/api/gggl/advertisement.js'
 import SearchBar from '@/components/SearchBar'
 
 export default {
@@ -51,8 +51,8 @@ export default {
         // columns注释在 @/components/TableEx/index.vue
         columns: [
           {
-            label: '公司名称', // 表头
-            prop: 'companyName', // 渲染的属性
+            label: '广告主题', // 表头
+            prop: 'title', // 渲染的属性
             class: 'link', // class
             width: '150', // 宽度
             click: (row) => {
@@ -60,46 +60,26 @@ export default {
             }
           },
           {
-            label: '法定代表人',
-            prop: 'legalPerson',
-            width: '150'
-          },
-          {
-            label: '联系人',
-            prop: 'linkMan',
+            label: '类型',
+            prop: 'typeName',
             width: '120'
           },
           {
-            label: '联系电话',
-            prop: 'linkTel',
-            width: '120'
-          },
-          {
-            label: '经营状态',
-            prop: 'operationState',
-            width: '120'
-          },
-          {
-            label: '成立日期',
-            prop: 'setDate',
+            label: '开始时间',
+            prop: 'startDate',
             width: '120',
             format: 'date'
           },
           {
-            label: '官网',
-            prop: 'officialNet',
-            width: '120'
-          },
-          {
-            label: '邮箱',
-            prop: 'email',
-            width: '120'
-          },
-          {
-            label: '是否使用',
-            prop: 'inUse',
+            label: '结束时间',
+            prop: 'endDate',
             width: '120',
-            format: (val) => val ? '是' : '否'
+            format: 'date'
+          },
+          {
+            label: '内容',
+            prop: 'content',
+            width: '120'
           },
           {
             business: 'createUser' // 业务部分的快捷使用参考 src\components\TableEx\Column\businessList.js
@@ -158,11 +138,11 @@ export default {
       const {
         data,
         count,
-        operationStateList
+        advertisementTypeList
       } = res
       // 列表数据初始化
       console.log('列表数据:', data)
-      this.$refs['SearchBar'].setData('operationStates', 'options', operationStateList, 'init')
+      this.$refs['SearchBar'].setData('types', 'options', advertisementTypeList, 'init')
       this.table.list = data
       this.table.total = count
     },
@@ -176,7 +156,7 @@ export default {
       postData.currentPage = currentPage
       postData.pageSize = pageSize
       // 请求开始
-      return getEnterprisePaging(postData)
+      return getAdvertisementPaging(postData)
     },
 
     /**
@@ -205,14 +185,14 @@ export default {
      * @param {*} row
      */
     handleDetails(row) {
-      this.$router.push({ name: 'EnterpriseDetails', query: { id: row.id, refreshRouterName: this.$route.name }})
+      this.$router.push({ name: 'AdvertisementDetail', query: { id: row.id, refreshRouterName: this.$route.name }})
     },
     /**
      * @description: table编辑
      * @param {Object} row
      */
     handleEdit(id = '', type) {
-      this.$router.push({ name: 'EnterpriseEdit', query: { type, id, refreshRouterName: this.$route.name }})
+      this.$router.push({ name: 'AdvertisementEdit', query: { type, id, refreshRouterName: this.$route.name }})
     }
   }
 }

@@ -24,7 +24,7 @@
 <script>
 import MyForm from '@/components/MyForm'
 
-import { GetMonitorById, addMonitor, putMonitor, deleteMonitor } from '@/api/jkgl/monitor.js'
+import { GetMonitorById, addMonitor, putMonitor, deleteMonitor, getAllMonitorNode } from '@/api/jkgl/monitor.js'
 export default {
   name: 'MonitorEdit',
   components: {
@@ -46,7 +46,8 @@ export default {
         loginPassword: '', // 登录密码
         isMonitor: 1, // 是否是监控
         inUse: 1, // 是否使用
-        remark: '' // 备注
+        remark: '', // 备注
+        pId: ''
       },
       firstRules: {
         name: [
@@ -66,9 +67,13 @@ export default {
         ],
         loginPassword: [
           { required: true, message: '请输入登录密码', trigger: 'change' }
+        ],
+        pId: [
+          { required: true, message: '请选择', trigger: 'change' }
         ]
       },
       filter: {
+        nodeList: [],
         inUseList: [{ name: '是', value: 1 }, { name: '否', value: 0 }]
       }
     }
@@ -82,22 +87,24 @@ export default {
       const {
         inputPlaceholder,
         selectPlaceholder,
-        filter: { inUseList }
+        filter: { nodeList, inUseList }
       } = this
 
       return [
         { label: '编号:', keyword: 'number', props: { placeholder: inputPlaceholder }},
         { label: '名称:', keyword: 'name', props: { placeholder: inputPlaceholder }},
         { label: 'IP地址:', keyword: 'ipAddress', props: { placeholder: inputPlaceholder }},
-        { label: '是否使用:', keyword: 'inUse', component: 'Select', props: { propsLabel: 'name', placeholder: selectPlaceholder, options: inUseList }},
+        { label: '节点:', keyword: 'pId', component: 'Select', props: { propsLabel: 'name', placeholder: selectPlaceholder, options: nodeList }},
         { label: '登录名:', keyword: 'loginName', props: { placeholder: inputPlaceholder }},
         { label: '登录密码:', keyword: 'loginPassword', props: { placeholder: inputPlaceholder }},
+        { label: '是否使用:', keyword: 'inUse', component: 'Select', props: { propsLabel: 'name', placeholder: selectPlaceholder, options: inUseList }},
         { label: '备注:', monopolize: true, keyword: 'remark', props: { placeholder: inputPlaceholder, type: 'textarea' }}
       ]
     }
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
+      vm.initSelect()
       const newId = vm.$route.query.id
       const oldId = vm.firstForm.id
       const type = vm.$route.query.type
@@ -129,6 +136,20 @@ export default {
       Object.assign(this.$data.firstForm, this.$options.data().firstForm)
       this.$nextTick(() => {
         this.$refs.firstForm.clearValidate()
+      })
+    },
+    /**
+     * @description: 初始化选项框数据
+     */
+    initSelect() {
+      getAllMonitorNode().then(res => {
+        res.data.forEach(e => {
+          e.pid = e.pId
+          e.label = e.name
+          e.value = e.id
+          delete e.pId
+        })
+        this.filter.nodeList = this.utils.getTree(0, res.data)
       })
     },
     /**
