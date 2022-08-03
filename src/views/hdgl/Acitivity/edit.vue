@@ -86,7 +86,8 @@ export default {
         { label: '开始时间:', keyword: 'startDate', component: 'el-date-picker', props: { type: 'date', placeholder: '选择日期', valueFormat: 'yyyy-MM-dd' }},
         { label: '结束时间:', keyword: 'endDate', component: 'el-date-picker', props: { type: 'date', placeholder: '选择日期', valueFormat: 'yyyy-MM-dd' }},
         { label: '内容:', keyword: 'content', props: { placeholder: inputPlaceholder, type: 'textarea' }},
-        { label: '备注:', keyword: 'remark', props: { placeholder: inputPlaceholder, type: 'textarea' }}
+        { label: '备注:', keyword: 'remark', props: { placeholder: inputPlaceholder, type: 'textarea' }},
+        { label: '合同附件:', monopolize: true, keyword: 'fileList', component: 'UpFile', width: '100%', props: { isUpfile: true, isDelete: true, fileSize: 100, isPreview: true }}
       ]
     }
   },

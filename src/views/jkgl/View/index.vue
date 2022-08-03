@@ -2,6 +2,7 @@
   <div class="app-container">
     <div style="padding-bottom:10px;">
       <el-button v-has="'MONITORNODE_ADD'" type="primary" size="mini" @click="addMonitorNode">添加节点</el-button>
+      <el-button v-has="'MONITOR_ADD'" type="primary" size="mini" @click="addMonitor('','add')">添加监控</el-button>
     </div>
     <el-container style="height:calc(100vh - 162px);">
       <el-aside width="300px">
@@ -60,7 +61,7 @@
         :visible.sync="dialogTableVisible"
         width="70%"
       >
-        <component :is="comName" :obj="currentRow" :nodes="checkedNodes" :pid="pid" @addItemclose="addItemClose" @addCategoryClose="addCategoryClose" @addProClose="addProClose" />
+        <component :is="comName" :obj="currentRow" :nodes="checkedNodes" :pid="pid" @dialogClose="dialogClose" />
       </el-dialog>
     </div>
   </div>
@@ -68,7 +69,7 @@
 
 <script>
 import { WebVideoCtrl } from '../../../../public/hikvision/webVideoCtrl.js'
-import { getMonitorList, getMonitorById, deleteMonitorNode } from '@/api/jkgl/monitor.js'
+import { getMonitorList, deleteMonitorNode } from '@/api/jkgl/monitor.js'
 import AddMonitorNode from './components/addMonitorNode'
 import { getTree } from '@/utils/index'
 
@@ -83,9 +84,6 @@ export default {
       listLoading: false,
       dialogTableVisible: false,
       dialogTitle: '保存',
-
-      tableList: [],
-      tableListLoading: false,
 
       total: 0,
       currentPage: 1,
@@ -146,23 +144,21 @@ export default {
         // console.log(this.list)
       })
     },
-    addCategoryClose(pid) {
+    dialogClose(pid) {
       this.expandIds = [pid]
       this.dialogTableVisible = false
       this.getMonitor()
     },
-    addItemClose() {
-      this.dialogTableVisible = false
-      if (this.currentRow) { this.getProperty(this.currentRow.categoryId) }
-      // this.getProperty(this.currentCategory.categoryId)
-    },
-    addProClose() {
-      this.dialogTableVisible = false
-      if (this.currentCategory) { this.getProperty(this.currentCategory.id) }
-    },
     filterNode(value, data) {
       if (!value) return true
       return data.label.indexOf(value) !== -1
+    },
+    /**
+     * @description: table编辑
+     * @param {Object} row
+     */
+    addMonitor(id = '', type) {
+      this.$router.push({ name: 'MonitorEdit', query: { type, id, refreshRouterName: this.$route.name }})
     },
     addMonitorNode() {
       this.dialogTitle = '添加节点'
@@ -201,20 +197,17 @@ export default {
       this.currentRow = null
       if (node.data.isMonitor) {
         this.currentMonitor = data
-        this.getMonitorView(data.id)
         this.currentRow = data
+        this.getMonitorView(data)
       } else {
-        // this.$message('必须是三级目录')
         this.currentMonitor = null
-        this.tableList = []
       }
     },
-    getMonitorView(monitorId) {
-      this.tableListLoading = true
-      getMonitorById({ id: monitorId }).then(response => {
-        this.tableList = response.data
-        this.tableListLoading = false
-      }).catch(() => { this.tableListLoading = false })
+    getMonitorView(data) {
+      this.hkvInfo.ip = data.ipAddress
+      this.hkvInfo.username = data.loginName
+      this.hkvInfo.password = data.loginPassword
+      this.onLogin()
     },
     onLogin() {
       var that = this
@@ -224,11 +217,12 @@ export default {
       WebVideoCtrl.I_Login(that.hkvInfo.ip, that.iProtocol, that.hkvInfo.port, that.hkvInfo.username, that.hkvInfo.password, {
         async: false,
         success: function(xmlDoc) {
-          // console.log('xmlDoc2', xmlDoc);//不能删除
+          console.log('xmlDoc2', xmlDoc) // 不能删除
           // TODO 获取通道信息
           that.getChannelInfo()
           that.getDevicePort(that.hkvInfo.ip + '_' + that.hkvInfo.port)
           that.loginLoading = false
+          that.clickStartRealPlay()
 
           that.$message({
             showClose: true,

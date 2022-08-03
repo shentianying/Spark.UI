@@ -8,10 +8,10 @@
     label-width="120px"
     size="mini"
   >
-    <el-form-item label="选择分类" prop="pid">
+    <el-form-item label="选择节点" prop="pId">
       <org-select2
         v-if="list"
-        v-model="ruleForm.pid"
+        v-model="ruleForm.pId"
         size="mini"
         :collapse-tags="false"
         :show-all-levels="true"
@@ -40,15 +40,19 @@
 </template>
 
 <script>
-import { getAllMonitorNode, addMonitorNode, getMonitorById } from '@/api/jkgl/monitor'
+import { getAllMonitorNode, addMonitorNode } from '@/api/jkgl/monitor'
+import OrgSelect2 from '@/components/OrgSelect/index2'
 export default {
   name: 'AddMonitorNode',
+  components: {
+    OrgSelect2
+  },
   props: {
     obj: {
       type: Object,
       default: null
     },
-    organizationId: {
+    pid: {
       type: Number,
       default: 0
     }
@@ -56,7 +60,19 @@ export default {
   },
   data() {
     return {
-      ruleForm: {},
+      ruleForm: {
+        id: 0, // 新增为0
+        companyId: this.$store.state.user.selectOrgId, // 公司id
+        number: '', // 编号
+        name: '', // 名称
+        ipAddress: '', // IP地址
+        loginName: '', // 登录名
+        loginPassword: '', // 登录密码
+        isMonitor: 0, // 是否是监控
+        inUse: 1, // 是否使用
+        remark: '', // 备注
+        pId: 0
+      },
       list: null,
       listLoading: false,
       buttonLoading: false,
@@ -73,19 +89,7 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          if (this.selectionItem.length <= 0) {
-            this.$message.error('请选择属性')
-            return false
-          }
-          const postData = []
-          this.selectionItem.forEach(element => {
-            const row = {}
-            row.categoryId = this.obj.id
-            row.propertyId = element.propertyId
-            row.canInput = element.canInput
-            row.inUse = element.inUse
-            postData.push(row)
-          })
+          const postData = this.ruleForm
           this.buttonLoading = true
           addMonitorNode(postData).then(response => {
             this.$message(response.message)
@@ -100,35 +104,15 @@ export default {
     },
     fetchData() {
       this.listLoading = true
-      new Promise((resolve, reject) => {
-        var postData = {}
-        postData.organizationId = this.organizationId
-        getAllMonitorNode(postData).then(response => {
-          const data = []
-          response.data.forEach(ele => {
-            const row = {}
-            row.name = ele.name
-            row.inUse = true
-            row.canInput = true
-            row.propertyId = ele.id
-            data.push(row)
-          })
-          this.list = data
-          resolve(data)
+      getAllMonitorNode().then(response => {
+        response.data.forEach(element => {
+          element.pid = element.pId
+          element.label = element.name
+          delete element.pId
         })
-      }).then(res => {
-        getMonitorById({ categoryId: this.obj.id }).then(response => {
-          response.data.forEach(ele => {
-            res.forEach(row => {
-              if (row.propertyId === ele.propertyId) {
-                row.inUse = ele.inUse
-                row.canInput = ele.canInput
-              }
-            })
-            this.$refs.selectTable.toggleRowSelection(res.find(item => item.propertyId === ele.propertyId))
-          })
-          this.listLoading = false
-        })
+        this.list = response.data
+        this.ruleForm.pId = this.pid
+        this.listLoading = false
       }).catch(() => { this.listLoading = false })
     },
     handleSelectionChange(val) {

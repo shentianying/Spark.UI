@@ -1,23 +1,16 @@
 <template>
   <div class="app-container details">
-    <div class="title"><i class="el-icon-info" />其他合同详情</div>
+    <div class="title"><i class="el-icon-info" />监控详情</div>
     <Detailsedit
       v-if="myDetails"
       status="checkInfo"
       :info-list="infoList"
     />
-    <div class="dashLine" />
-    <h4>附件列表</h4>
-    <Detailsedit
-      v-if="myDetails"
-      status="checkInfo"
-      :info-list="upFileList"
-    />
   </div>
 </template>
 
 <script>
-import { GetMonitorById } from '@/api/jkgl/monitor'
+import { getMonitorById } from '@/api/jkgl/monitor'
 import Detailsedit from '@/components/Detailsedit'
 export default {
   name: 'MonitorDetails',
@@ -40,14 +33,12 @@ export default {
         myDetails: {
           data: {
             number,
-            projectName,
-            orgName,
             name,
-            contractTypeName,
-            subcontractor,
-            signDate,
-            isSave,
-            paymentTerms,
+            pId,
+            ipAddress,
+            loginName,
+            loginPassword,
+            inUse,
             remark,
             createUserName,
             createDate,
@@ -58,9 +49,6 @@ export default {
         }
       } = this
 
-      // const m = (val) => this.utils.formatMoney(val, 2, 0)
-      const d = (dataStr) => dataStr ? this.$moment(dataStr).format('YYYY-MM-DD') : dataStr
-      // const a = this.utils.amountInWords
       const info = [
         { label: '制单人', value: createUserName },
         { label: '制单时间', value: createDate },
@@ -69,35 +57,14 @@ export default {
       ]
       return [
         { label: '编号', value: number },
-        { label: '项目', value: projectName },
-        { label: '组织机构', value: orgName },
-        { label: '合同名称', value: name },
-        { label: '类别', value: contractTypeName },
-        { label: '合作单位', value: subcontractor },
-        { label: '签订日期', value: d(signDate) },
-        { label: '存档', value: isSave ? '是' : '否' },
-        { label: '付款条款', value: paymentTerms },
-        { label: '备注', value: remark },
+        { label: '名称', value: name },
+        { label: 'IP地址', value: ipAddress },
+        { label: '节点', value: pId },
+        { label: '登录名', value: loginName },
+        { label: '密码', value: loginPassword },
+        { label: '是否使用', value: inUse ? '是' : '否' },
+        { label: '备注', value: remark, monopolize: true },
         ...info
-        // { label: '附件', value: upFile || [], component: 'UpFile', monopolize: true },
-      ]
-    },
-    /**
-     * 附件列表
-     */
-    upFileList() {
-      const {
-        myDetails: {
-          data: {
-            contractUpFile,
-            assesmentUpFile
-          }
-        }
-      } = this
-
-      return [
-        { label: '合同', value: contractUpFile || [], component: 'UpFile', monopolize: true },
-        { label: '评审记录', value: assesmentUpFile || [], component: 'UpFile', monopolize: true }
       ]
     }
   },
@@ -120,7 +87,7 @@ export default {
      */
     async fetchData() {
       if (!this.myId) return
-      GetMonitorById({ id: this.myId }).then(res => {
+      getMonitorById({ id: this.myId }).then(res => {
         this.myDetails = res
       }).catch(e => {
         console.log('fetchData:请求列表数据失败，错误信息：', e)
